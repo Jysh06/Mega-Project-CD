@@ -2,20 +2,23 @@ pipeline {
     agent any
 
     stages {
-        stage('Git Checkout') {
+        stage('GIT CHECKOUT') {
             steps {
-                git branch: 'main', credentialsId: 'git', url: 'https://github.com/jaiswaladi246/Mega-Project-CD.git'
+                git branch: 'main', url: 'https://github.com/Jysh06/Mega-Project-CD.git'
             }
         }
         
-        stage('Kubernetes Deployment') {
+         stage('KUBERNETES DEPLOYMENT') {
             steps {
-                withKubeConfig(caCertificate: '', clusterName: 'devopsshack-cluster', contextName: '', credentialsId: 'k8-token', namespace: 'webapps', restrictKubeConfigAccess: false, serverUrl: 'https://952FB702C508F688D873376083B31DF5.gr7.ap-south-1.eks.amazonaws.com') {
-                    sh "kubectl apply -f Manifest/manifest.yaml -n webapps"
-                    sh "kubectl apply -f Manifest/HPA.yaml "
-                    sleep 30
-                    sh "kubectl get pods -n webapps"
-                    sh "kubectl get service -n webapps"
+                 withKubeConfig(caCertificate: '', clusterName: ' devopsshack-cluster', contextName: '', credentialsId: 'kube-cred', namespace: 'webapps', restrictKubeConfigAccess: false, serverUrl: 'https://30463FF1838D6D7CDC46BBC14DCA266D.gr7.ap-south-1.eks.amazonaws.com') {
+                    sh 'kubectl apply -f Manifest/manifest.yaml -n webapps'
+                    sh 'kubectl apply -f Manifest/HPA.yaml -n webapps'
+                    sh '''
+                        kubectl get pods -n webapps
+                        kubectl get svc -n webapps
+                        kubectl get deploy -n webapps
+                        kubectl get hpa -n webapps
+                       '''
                 }
             }
         }
